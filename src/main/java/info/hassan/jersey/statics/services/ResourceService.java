@@ -12,10 +12,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import info.hassan.jersey.statics.api.StaticResource;
+import info.hassan.jersey.statics.api.ResourceResult;
 
 /** A service to load resources */
-public interface StaticResourceService {
+public interface ResourceService {
 
   /** A cache to put the resources for later use */
   ConcurrentHashMap<String, Map.Entry<String, byte[]>> resourceCache = new ConcurrentHashMap<>();
@@ -27,7 +27,7 @@ public interface StaticResourceService {
    * @return an {@link Optional} of {@link java.util.AbstractMap.SimpleEntry} of mime-type and data
    *     as byte array
    */
-  StaticResource getDataForResource(final String resourceName);
+  ResourceResult getDataForResource(final String resourceName);
 
   Path getBaseDir();
   /**

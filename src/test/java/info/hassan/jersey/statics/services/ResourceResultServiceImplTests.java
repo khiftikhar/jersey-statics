@@ -1,17 +1,19 @@
 package info.hassan.jersey.statics.services;
 
-import static info.hassan.jersey.statics.services.MimeType.APPLICATION_JAVASCRIPT;
-import static info.hassan.jersey.statics.services.MimeType.APPLICATION_JSON;
-import static info.hassan.jersey.statics.services.MimeType.IMAGE_PNG;
-import static info.hassan.jersey.statics.services.MimeType.IMAGE_SVG;
-import static info.hassan.jersey.statics.services.MimeType.TEXT_CSS;
-import static info.hassan.jersey.statics.services.MimeType.TEXT_HTML;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static info.hassan.jersey.statics.services.TestsHelper.APPLICATION_JAVASCRIPT;
+import static info.hassan.jersey.statics.services.TestsHelper.APPLICATION_JSON;
+import static info.hassan.jersey.statics.services.TestsHelper.IMAGE_PNG;
+import static info.hassan.jersey.statics.services.TestsHelper.IMAGE_SVG;
+import static info.hassan.jersey.statics.services.TestsHelper.TEXT_CSS;
+import static info.hassan.jersey.statics.services.TestsHelper.TEXT_HTML;
+import static info.hassan.jersey.statics.services.TestsHelper.assertEverythingInResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.condition.OS.MAC;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,24 +23,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import info.hassan.jersey.statics.api.StaticResource;
+import info.hassan.jersey.statics.api.ResourceResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
-@DisplayName("Testing default StaticResourceServiceImpl")
-class StaticResourceServiceImplTests {
+@DisplayName("Testing default ResourceServiceImpl")
+@DisabledOnOs({WINDOWS, MAC})
+class ResourceResultServiceImplTests {
 
-  private StaticResourceService service;
-  private StaticResource defaultNotFound;
-  private StaticResource defaultServerError;
+  private ResourceService service;
+  private ResourceResult defaultNotFound;
+  private ResourceResult defaultServerError;
 
   @BeforeEach
   void setup() throws FileNotFoundException {
-    service = new StaticResourceServiceImpl(Paths.get("src", "test", "resources", "html"));
+    service = new ResourceServiceImpl(Paths.get("src", "test", "resources", "html"));
     assertNotNull(service);
     defaultNotFound = service.getDataForResource("404.html");
     defaultServerError = service.getDataForResource("500.html");
@@ -52,7 +56,7 @@ class StaticResourceServiceImplTests {
     @Test
     void throwIllegalArgumentException() {
       try {
-        service = new StaticResourceServiceImpl(null);
+        service = new ResourceServiceImpl(null);
         fail("Exception must been thrown");
       } catch (Exception e) {
         assertTrue(e instanceof IllegalArgumentException);
@@ -63,7 +67,7 @@ class StaticResourceServiceImplTests {
     @Test
     void throwFileNotFoundException() {
       try {
-        service = new StaticResourceServiceImpl(Paths.get("/some/bad/path"));
+        service = new ResourceServiceImpl(Paths.get("/some/bad/path"));
         fail("Exception must been thrown");
       } catch (Exception e) {
         assertTrue(e instanceof FileNotFoundException);
@@ -74,7 +78,7 @@ class StaticResourceServiceImplTests {
         "When requested resource and baseDir/404.html doesn't exists , default 404.html is returned")
     @Test
     void resourceNotFoundDefault() {
-      final StaticResource notFound = service.getDataForResource("abc/xyz/123.html");
+      final ResourceResult notFound = service.getDataForResource("abc/xyz/123.html");
       assertEverythingInResource(notFound, 404, TEXT_HTML);
       assertEquals(defaultNotFound, notFound);
     }
@@ -82,7 +86,7 @@ class StaticResourceServiceImplTests {
     @DisplayName("When default 500.html doesn't exists, default 505.html is returned")
     @Test
     void resourceServerErrorDefault() {
-      final StaticResource serverError = service.getDataForResource("500.html");
+      final ResourceResult serverError = service.getDataForResource("500.html");
       assertEverythingInResource(serverError, 500, TEXT_HTML);
       assertEquals(defaultServerError, serverError);
     }
@@ -99,7 +103,7 @@ class StaticResourceServiceImplTests {
               data,
               StandardOpenOption.CREATE,
               StandardOpenOption.TRUNCATE_EXISTING);
-      service = new StaticResourceServiceImpl(Paths.get("src", "test", "resources", "html"));
+      service = new ResourceServiceImpl(Paths.get("src", "test", "resources", "html"));
       assertNotNull(service);
       assertNotEquals(defaultNotFound, service.getDataForResource("404.html"));
       Files.deleteIfExists(new404);
@@ -140,7 +144,7 @@ class StaticResourceServiceImplTests {
     @DisplayName("Updated index.html will not be returned")
     @Test
     void indexFileUpdateHaveNoEffect() throws IOException {
-      StaticResource index = service.getDataForResource("index.html");
+      ResourceResult index = service.getDataForResource("index.html");
       assertEverythingInResource(index, 200, TEXT_HTML);
       final int indexLength = index.getData().length;
       final Document document = Jsoup.parse(new String(index.getData(), Charset.defaultCharset()));
@@ -157,19 +161,5 @@ class StaticResourceServiceImplTests {
           index.getData(),
           StandardOpenOption.TRUNCATE_EXISTING);
     }
-  }
-
-  private void assertEverythingInResource(
-      final StaticResource resource, int statusCode, final String mimeType) {
-    assertAll(
-        "Assert that resource object is filled with correct values",
-        () -> assertNotNull(resource, "Service must return resource object"),
-        () -> assertEquals(statusCode, resource.getStatusCode(), "Response code must be 200"),
-        () -> assertEquals(mimeType, resource.getMimeType(), "MimeType must be " + mimeType),
-        () -> assertNotNull(resource.getData(), "Data must not be null"),
-        () ->
-            assertTrue(
-                resource.getData().length > 0,
-                "The length of data array must be creator than zero"));
   }
 }

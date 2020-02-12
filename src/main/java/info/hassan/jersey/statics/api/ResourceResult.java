@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class StaticResource implements Comparable<StaticResource> {
+public class ResourceResult implements Comparable<ResourceResult> {
 
   private final int statusCode;
   private String mimeType;
   private byte[] data;
 
-  public StaticResource(int statusCode) {
+  public ResourceResult(int statusCode) {
     this.statusCode = statusCode;
   }
 
-  public StaticResource(int statusCode, String mimeType, byte[] data) {
+  public ResourceResult(int statusCode, String mimeType, byte[] data) {
     this.statusCode = statusCode;
     this.mimeType = mimeType;
     this.data = data;
@@ -57,7 +57,7 @@ public class StaticResource implements Comparable<StaticResource> {
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", StaticResource.class.getSimpleName() + "[", "]")
+    return new StringJoiner(", ", ResourceResult.class.getSimpleName() + "[", "]")
         .add("statusCode=" + statusCode)
         .add("mimeType='" + mimeType + "'")
         .add("dataLength=" + data.length)
@@ -67,8 +67,8 @@ public class StaticResource implements Comparable<StaticResource> {
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-    if (!(that instanceof StaticResource)) return false;
-    StaticResource thatOne = (StaticResource) that;
+    if (!(that instanceof ResourceResult)) return false;
+    ResourceResult thatOne = (ResourceResult) that;
     return statusCode == thatOne.statusCode
         && mimeType.equals(thatOne.mimeType)
         && Arrays.equals(data, thatOne.data);
@@ -82,10 +82,10 @@ public class StaticResource implements Comparable<StaticResource> {
   }
 
   @Override
-  public int compareTo(StaticResource that) {
+  public int compareTo(ResourceResult that) {
     return nullsFirst(
-            comparingInt(StaticResource::getStatusCode)
-                .thenComparing(StaticResource::getMimeType)
+            comparingInt(ResourceResult::getStatusCode)
+                .thenComparing(ResourceResult::getMimeType)
                 .thenComparing(
                     (one, two) -> {
                       if (two.getData() == null) {

@@ -6,32 +6,32 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import info.hassan.jersey.statics.api.StaticResource;
-import info.hassan.jersey.statics.services.StaticResourceService;
+import info.hassan.jersey.statics.api.ResourceResult;
+import info.hassan.jersey.statics.services.ResourceService;
 
 @Path("/")
 public class StaticsResource {
 
-  private StaticResourceService staticResourceService;
+  private ResourceService resourceService;
 
-  public void setStaticResourceService(final StaticResourceService staticResourceService) {
-    this.staticResourceService = staticResourceService;
+  public void setResourceService(final ResourceService resourceService) {
+    this.resourceService = resourceService;
   }
 
   @GET
   @Produces("text/html")
   @Path("/{parameter: |index|index.html}")
   public Response index() {
-    return buildResponseFromStaticsResponse(staticResourceService.getDataForResource("index.html"));
+    return buildResponseFromStaticsResponse(resourceService.getDataForResource("index.html"));
   }
 
   @Path("/{anyResource:.*}")
   @GET
   public Response getResource(@PathParam("anyResource") final String anyResource) {
-    return buildResponseFromStaticsResponse(staticResourceService.getDataForResource(anyResource));
+    return buildResponseFromStaticsResponse(resourceService.getDataForResource(anyResource));
   }
 
-  private Response buildResponseFromStaticsResponse(final StaticResource response) {
+  private Response buildResponseFromStaticsResponse(final ResourceResult response) {
     final Response.ResponseBuilder builder = Response.status(response.getStatusCode());
     if (response.getStatusCode() == 200) {
       return builder.type(response.getMimeType()).entity(response.getData()).build();

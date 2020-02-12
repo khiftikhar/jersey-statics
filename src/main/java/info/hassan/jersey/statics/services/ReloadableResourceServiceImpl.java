@@ -28,11 +28,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReloadableStaticResourceServiceImpl extends StaticResourceServiceImpl
-    implements Closeable {
+public class ReloadableResourceServiceImpl extends ResourceServiceImpl implements Closeable {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(ReloadableStaticResourceServiceImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ReloadableResourceServiceImpl.class);
 
   private static final long DEFAULT_POLL_FOR_CHANGE_IN_MILLIS = 5000L;
   public static final int MAX_DEPTH = 10;
@@ -46,7 +44,7 @@ public class ReloadableStaticResourceServiceImpl extends StaticResourceServiceIm
    * @param pollForChangeInMillis polling for changes in milliseconds, min is 1000L or one second
    * @throws IOException when baseDir couldn't read or some other I/O issues
    */
-  public ReloadableStaticResourceServiceImpl(Path baseDir, final long pollForChangeInMillis)
+  public ReloadableResourceServiceImpl(Path baseDir, final long pollForChangeInMillis)
       throws IOException {
     super(baseDir);
     watchService = FileSystems.getDefault().newWatchService();
