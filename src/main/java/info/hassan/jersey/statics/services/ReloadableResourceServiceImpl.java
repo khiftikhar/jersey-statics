@@ -30,14 +30,13 @@ import org.slf4j.LoggerFactory;
 
 public class ReloadableResourceServiceImpl extends ResourceServiceImpl implements Closeable {
 
-  private static final Logger log = LoggerFactory.getLogger(ReloadableResourceServiceImpl.class);
-
-  private static final long DEFAULT_POLL_FOR_CHANGE_IN_MILLIS = 5000L;
   public static final int MAX_DEPTH = 10;
-  private WatchService watchService;
-  private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+  private static final Logger log = LoggerFactory.getLogger(ReloadableResourceServiceImpl.class);
+  private static final long DEFAULT_POLL_FOR_CHANGE_IN_MILLIS = 5000L;
   private static final Kind<?>[] WATCH_EVENTS =
       new Kind<?>[] {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW};
+  private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+  private WatchService watchService;
 
   /**
    * @param baseDir the base directory and all its subdirectories to depth = 10 to be watched

@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import info.hassan.jersey.statics.api.ResourceResult;
 
-/** A service to load resources */
+/** A service to load static resources */
 public interface ResourceService {
 
   /** A cache to put the resources for later use */
@@ -31,10 +31,10 @@ public interface ResourceService {
 
   Path getBaseDir();
   /**
-   * A utility method for getting
+   * A utility method for getting default page from resources.
    *
-   * @param pageNumber
-   * @return
+   * @param pageNumber e.g 404 or 500
+   * @return data bytes or empty
    */
   default Optional<byte[]> getPageProvidedResources(final int pageNumber) {
     final InputStream stream =
@@ -54,6 +54,12 @@ public interface ResourceService {
             });
   }
 
+  /**
+   * Loads data bytes and figures out mime-type from a path.
+   *
+   * @param rPath resource path
+   * @return an Optional of Key and Value where key is mime-type and value is data bytes
+   */
   default Optional<AbstractMap.SimpleEntry<String, byte[]>> readDataFromPath(final Path rPath) {
     if (!Files.exists(rPath)) {
       return Optional.empty();

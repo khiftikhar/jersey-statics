@@ -41,7 +41,7 @@ class ResourceResultServiceImplTests {
   private ResourceResult defaultServerError;
 
   @BeforeEach
-  void setup() throws FileNotFoundException {
+  void setup() throws IOException {
     service = new ResourceServiceImpl(Paths.get("src", "test", "resources", "html"));
     assertNotNull(service);
     defaultNotFound = service.getDataForResource("404.html");

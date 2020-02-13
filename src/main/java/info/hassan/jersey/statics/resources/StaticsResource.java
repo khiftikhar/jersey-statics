@@ -1,5 +1,6 @@
 package info.hassan.jersey.statics.resources;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -12,9 +13,10 @@ import info.hassan.jersey.statics.services.ResourceService;
 @Path("/")
 public class StaticsResource {
 
-  private ResourceService resourceService;
+  private final ResourceService resourceService;
 
-  public void setResourceService(final ResourceService resourceService) {
+  @Inject
+  public StaticsResource(ResourceService resourceService) {
     this.resourceService = resourceService;
   }
 

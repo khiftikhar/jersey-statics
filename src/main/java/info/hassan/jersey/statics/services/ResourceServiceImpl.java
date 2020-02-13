@@ -3,6 +3,7 @@ package info.hassan.jersey.statics.services;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ public class ResourceServiceImpl implements ResourceService {
    * @throws FileNotFoundException if the path {@link Files#exists(Path, LinkOption...)} returns
    *     false
    */
-  public ResourceServiceImpl(Path baseDir) throws FileNotFoundException {
+  public ResourceServiceImpl(Path baseDir) throws IOException {
     if (baseDir == null) {
       throw new IllegalArgumentException("Base directory path must not null");
     } else if (!Files.exists(baseDir)) {
