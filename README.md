@@ -47,6 +47,16 @@ class, I will do something like
 @Configuration
 public class AppConfig {
 
+  @Bean
+  public ServletRegistrationBean<ServletContainer> servletContainer() {
+    final ResourceConfig resourceConfig = new ResourceConfig();
+    resourceConfig.registerResources(Resource.builder(StaticsResource.class).path("/").build());
+    final ServletRegistrationBean<ServletContainer> servlet =
+        new ServletRegistrationBean<>(new ServletContainer(resourceConfig));
+    servlet.addUrlMappings("/*");
+    return servlet;
+  }
+
   @Profile("dev")
   @Bean
   public ResourceService reloadableResourceService(
@@ -65,3 +75,4 @@ public class AppConfig {
 }
 ``` 
 
+So this way you can serve your rest through a different ResourceConfig and static resources like above.

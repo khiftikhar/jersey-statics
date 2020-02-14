@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import info.hassan.jersey.statics.api.ResourceResult;
 import info.hassan.jersey.statics.services.ResourceService;
 
-@Path("/")
 public class StaticsResource {
 
   private final ResourceService resourceService;
